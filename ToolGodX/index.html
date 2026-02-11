@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="ToolGodX - The Ultimate Tool Suite for Botting. Access ID Splitter and Storm Splitter.">
+    <meta name="keywords" content="ToolGodX, ID Splitter, Storm Splitter, Bot Tools">
+    <meta name="theme-color" content="#3b82f6">
+    <title>ToolGodX - Home</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="home.js" defer></script>
+</head>
+
+<body>
+    <!-- Particle Canvas -->
+    <canvas id="particleCanvas"></canvas>
+
+    <!-- Animated Background Blobs -->
+    <div class="background-glob home-glob"></div>
+    <div class="background-glob home-glob-2"></div>
+    <div class="background-glob home-glob-3"></div>
+
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+                ToolGod<span class="accent">X</span>
+            </a>
+            <ul class="nav-menu">
+                <li><a href="bot.html" class="nav-link">BOT SPLITTER</a></li>
+                <li><a href="storm.html" class="nav-link">STORM SPLITTER</a></li>
+            </ul>
+            <a href="#" class="nav-link contact-btn">Contact</a>
+        </div>
+    </nav>
+
+    <div class="home-container">
+        <!-- Hero Section -->
+        <header class="hero-section">
+            <div class="hero-badge">⚡ PREMIUM TOOLS</div>
+            <h1 class="hero-title">
+                <span class="hero-line-1">WELCOME TO</span>
+                <span class="hero-line-2">Tool<span class="accent">God</span>X</span>
+            </h1>
+            <p class="hero-subtitle">
+                <span id="typingText"></span><span class="typing-cursor">|</span>
+            </p>
+        </header>
+
+        <!-- Feature Cards -->
+        <main class="feature-grid">
+            <!-- Bot Splitter Card -->
+            <a href="bot.html" class="feature-card-wrapper bot-wrapper" id="botCard">
+                <div class="card-border-glow"></div>
+                <div class="feature-card bot-card">
+                    <div class="card-shine"></div>
+                    <div class="card-corner card-corner-tl"></div>
+                    <div class="card-corner card-corner-br"></div>
+                    <div class="card-status-badge bot-badge">⭐ POPULAR</div>
+                    <div class="card-content">
+                        <div class="card-icon-wrapper">
+                            <div class="card-icon">🤖</div>
+                            <div class="card-icon-ring"></div>
+                            <div class="card-icon-ring card-icon-ring-2"></div>
+                        </div>
+                        <h2>BOT SPLITTER</h2>
+                        <p>แบ่งไอดีและคุกกี้สำหรับหลาย PC ได้ทันที</p>
+                        <ul class="card-features">
+                            <li>✦ รองรับ Combo/Cookie</li>
+                            <li>✦ แบ่งหลายบอทพร้อมกัน</li>
+                            <li>✦ Export ง่ายและรวดเร็ว</li>
+                        </ul>
+                        <div class="card-cta">
+                            <span>เข้าใช้งาน</span>
+                            <span class="cta-arrow">→</span>
+                        </div>
+                    </div>
+                    <div class="card-glow"></div>
+                </div>
+            </a>
+
+            <!-- Storm Splitter Card -->
+            <a href="storm.html" class="feature-card-wrapper storm-wrapper" id="stormCard">
+                <div class="card-border-glow"></div>
+                <div class="feature-card storm-card">
+                    <div class="card-shine"></div>
+                    <div class="card-corner card-corner-tl"></div>
+                    <div class="card-corner card-corner-br"></div>
+                    <div class="card-status-badge storm-badge">🔥 HOT</div>
+                    <div class="card-content">
+                        <div class="card-icon-wrapper">
+                            <div class="card-icon">🌪️</div>
+                            <div class="card-icon-ring"></div>
+                            <div class="card-icon-ring card-icon-ring-2"></div>
+                        </div>
+                        <h2>STORM SPLITTER</h2>
+                        <p>ดึงและจัดระเบียบ Combo จาก Storm Bot อัตโนมัติ</p>
+                        <ul class="card-features">
+                            <li>✦ Parse CSV อัตโนมัติ</li>
+                            <li>✦ แยกตามกลุ่มราคา</li>
+                            <li>✦ Drag & Drop ไฟล์ได้</li>
+                        </ul>
+                        <div class="card-cta">
+                            <span>เข้าใช้งาน</span>
+                            <span class="cta-arrow">→</span>
+                        </div>
+                    </div>
+                    <div class="card-glow"></div>
+                </div>
+            </a>
+        </main>
+
+        <!-- Stats Section -->
+        <section class="stats-section">
+            <div class="stat-item">
+                <span class="stat-number" data-target="2">0</span>
+                <span class="stat-label">TOOLS</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+                <span class="stat-number" data-target="100">0</span><span class="stat-suffix">%</span>
+                <span class="stat-label">FREE</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+                <span class="stat-number" data-target="0">0</span>
+                <span class="stat-label">ADS</span>
+            </div>
+        </section>
+
+        <footer>
+            <p>Created by ToolGodX Agent &bull; 2026</p>
+        </footer>
+    </div>
+</body>
+
+</html>
