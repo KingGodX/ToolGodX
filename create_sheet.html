@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="ToolGodX - Create Sheet. Merge Storm Export and Combo.txt to generate Google Sheets data.">
+    <meta name="theme-color" content="#10b981">
+    <title>ToolGodX - Create Sheet</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="create_sheet.js" defer></script>
+</head>
+
+<body>
+    <div class="background-glob"
+        style="background: radial-gradient(circle, rgba(16, 185, 129, 0.4) 0%, transparent 70%);"></div>
+
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+                ToolGod<span class="accent">X</span>
+            </a>
+            <ul class="nav-menu">
+                <li><a href="bot.html" class="nav-link">BOT SPLITTER</a></li>
+                <li><a href="storm.html" class="nav-link">STORM SPLITTER</a></li>
+                <li><a href="create_sheet.html" class="nav-link active">CREATE SHEET</a></li>
+            </ul>
+            <a href="#" class="nav-link contact-btn">Contact</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <header>
+            <h1 class="glow-text" style="text-shadow: 0 0 20px rgba(16, 185, 129, 0.5);">CREATE <span class="accent"
+                    style="color: #10b981;">SHEET</span></h1>
+            <p class="subtitle">รวมไฟล์ Storm Export และ Combo.txt ลง Google Sheet</p>
+        </header>
+
+        <main>
+            <div class="grid-2-col">
+                <!-- Storm File Input -->
+                <div class="card input-card">
+                    <div class="form-group">
+                        <label for="stormInput">⚡ Storm Export File</label>
+                        <div id="dropZoneStorm" class="drop-zone small-drop-zone">
+                            <textarea id="stormInput"
+                                placeholder="Drag & Drop Storm Export (.csv/.xlsx) here..."></textarea>
+                            <div class="drop-overlay">📂 วางไฟล์ Storm</div>
+                        </div>
+                        <div class="meta-info" id="stormStatus">สถานะ: รอไฟล์...</div>
+                    </div>
+                </div>
+
+                <!-- Combo File Input -->
+                <div class="card input-card">
+                    <div class="form-group">
+                        <label for="comboInput">🔑 Combo.txt File</label>
+                        <div id="dropZoneCombo" class="drop-zone small-drop-zone">
+                            <textarea id="comboInput" placeholder="Drag & Drop Combo.txt here..."></textarea>
+                            <div class="drop-overlay">📂 วางไฟล์ Combo</div>
+                        </div>
+                        <div class="meta-info" id="comboStatus">สถานะ: รอไฟล์...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Export Settings -->
+            <div class="card input-card mt-4"
+                style="text-align: center; max-width: 500px; margin-left: auto; margin-right: auto;">
+                <div class="compact-settings">
+                    <div class="form-group">
+                        <label for="fileNameInput">Excel Filename (Optional)</label>
+                        <input type="text" id="fileNameInput" placeholder="ToolGodX_Merged"
+                            class="styled-input neon-input">
+                    </div>
+                </div>
+
+                <div class="controls center-controls" style="justify-content: center;">
+                    <button id="mergeBtn" class="action-btn btn-animate-green"
+                        style="min-width: 180px; flex: 0 1 auto; width: auto; padding: 0.8rem 2rem;">
+                        <span class="btn-text">🚀 Merge & Generate</span>
+                    </button>
+                    <button id="clearBtn" class="secondary-btn">🗑️ Clear All</button>
+                </div>
+            </div>
+
+            <div id="resultsArea" class="results-grid" style="display: flex; justify-content: flex-start;">
+                <!-- Preview Table will appear here -->
+            </div>
+        </main>
+
+        <footer>
+            <p>Created by ToolGodX Agent &bull; 2026</p>
+        </footer>
+    </div>
+</body>
+
+</html>

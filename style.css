@@ -191,6 +191,19 @@ header {
     margin-bottom: 2rem;
 }
 
+.grid-2-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+@media (max-width: 768px) {
+    .grid-2-col {
+        grid-template-columns: 1fr;
+    }
+}
+
 /* Inputs */
 .form-group {
     margin-bottom: 1.5rem;
@@ -217,6 +230,11 @@ textarea {
     transition: border-color 0.2s, box-shadow 0.2s;
 }
 
+#stormInput,
+#comboInput {
+    height: 120px;
+}
+
 textarea:focus {
     outline: none;
     border-color: var(--primary);
@@ -228,6 +246,23 @@ textarea:focus {
     font-size: 0.85rem;
     color: var(--text-muted);
     margin-top: 0.5rem;
+}
+
+.compact-settings {
+    max-width: 400px;
+    margin: 0 auto 1.5rem auto;
+    text-align: left;
+}
+
+.neon-input {
+    border: 1px solid rgba(16, 185, 129, 0.5) !important;
+    box-shadow: 0 0 10px rgba(16, 185, 129, 0.2);
+    transition: all 0.3s ease;
+}
+
+.neon-input:focus {
+    border-color: #10b981 !important;
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.4), inset 0 0 10px rgba(16, 185, 129, 0.1);
 }
 
 /* Controls */
@@ -344,6 +379,55 @@ textarea:focus {
     border-color: rgba(239, 68, 68, 0.3);
 }
 
+@keyframes gradientMove {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    100% {
+        background-position: 100% 50%;
+    }
+}
+
+.btn-animate-green {
+    background: linear-gradient(270deg, #10b981, #059669, #34d399, #059669);
+    background-size: 300% 300%;
+    animation: gradientMove 3s linear infinite;
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+    border: none;
+    color: white;
+}
+
+.btn-animate-green:hover {
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.6);
+}
+
+.btn-animate-blue {
+    background: linear-gradient(270deg, #3b82f6, #2563eb, #60a5fa, #2563eb);
+    background-size: 300% 300%;
+    animation: gradientMove 3s linear infinite;
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+    border: none;
+    color: white;
+}
+
+.btn-animate-blue:hover {
+    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.6);
+}
+
+.btn-animate-pink {
+    background: linear-gradient(270deg, #ec4899, #be185d, #f472b6, #be185d);
+    background-size: 300% 300%;
+    animation: gradientMove 3s linear infinite;
+    box-shadow: 0 4px 15px rgba(236, 72, 153, 0.4);
+    border: none;
+    color: white;
+}
+
+.btn-animate-pink:hover {
+    box-shadow: 0 6px 20px rgba(236, 72, 153, 0.6);
+}
+
 /* Results Grid */
 .results-grid {
     display: grid;
@@ -380,11 +464,18 @@ textarea:focus {
 
 .result-header {
     background: rgba(255, 255, 255, 0.03);
-    padding: 1rem;
+    padding: 0.5rem 1rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
     border-bottom: 1px solid var(--border);
+}
+
+.result-header .copy-btn {
+    width: auto;
+    margin-top: 0;
+    padding: 0.4rem 1rem;
+    font-size: 0.9rem;
 }
 
 .result-title {
@@ -398,6 +489,12 @@ textarea:focus {
     border-radius: 20px;
     font-size: 0.8rem;
     color: var(--text-muted);
+}
+
+.table-container {
+    max-height: 200px;
+    overflow-y: auto;
+    border-bottom: 1px solid var(--border);
 }
 
 .result-body {
@@ -1066,6 +1163,58 @@ footer {
 .storm-wrapper:hover .card-glow {
     opacity: 1;
     background: linear-gradient(to top, rgba(236, 72, 153, 0.1), transparent);
+}
+
+/* ---- Sheet Card Hover ---- */
+.sheet-wrapper:hover .card-border-glow {
+    background: conic-gradient(from var(--border-angle, 0deg),
+            transparent 0%,
+            transparent 20%,
+            rgba(16, 185, 129, 0.6) 35%,
+            rgba(16, 185, 129, 0.8) 50%,
+            rgba(16, 185, 129, 0.6) 65%,
+            transparent 80%,
+            transparent 100%);
+}
+
+.sheet-wrapper:hover .card-corner {
+    background: #10b981;
+    box-shadow: 0 0 12px rgba(16, 185, 129, 0.6);
+}
+
+.sheet-badge {
+    background: rgba(16, 185, 129, 0.15);
+    color: #34d399;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.sheet-wrapper:hover .feature-card {
+    box-shadow: inset 0 0 60px rgba(16, 185, 129, 0.04);
+}
+
+.sheet-wrapper:hover h2 {
+    color: #10b981;
+    text-shadow: 0 0 25px rgba(16, 185, 129, 0.6);
+}
+
+.sheet-wrapper:hover .card-icon-ring {
+    border-color: #10b981;
+    box-shadow: 0 0 25px rgba(16, 185, 129, 0.6);
+}
+
+.sheet-wrapper:hover .card-icon-ring-2 {
+    border-color: rgba(16, 185, 129, 0.3);
+}
+
+.sheet-wrapper:hover .card-cta {
+    border-color: rgba(16, 185, 129, 0.4);
+    background: rgba(16, 185, 129, 0.1);
+    color: #34d399;
+}
+
+.sheet-wrapper:hover .card-glow {
+    opacity: 1;
+    background: linear-gradient(to top, rgba(16, 185, 129, 0.1), transparent);
 }
 
 /* Stats Section */

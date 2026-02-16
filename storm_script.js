@@ -38,7 +38,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function handleFiles(files) {
         const file = files[0];
-        if (file.type.match('text.*') || file.name.endsWith('.csv')) {
+
+        // Handle Excel Files
+        if (file.name.endsWith('.xlsx') || file.name.endsWith('.xls')) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+
+                // Get first sheet
+                const firstSheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert to CSV format to reuse existing parser
+                const csvData = XLSX.utils.sheet_to_csv(worksheet);
+
+                inputText.value = csvData;
+                updateLineCount();
+            };
+            reader.readAsArrayBuffer(file);
+        }
+        // Handle Text/CSV Files
+        else if (file.type.match('text.*') || file.name.endsWith('.csv')) {
             const reader = new FileReader();
             reader.onload = function (e) {
                 inputText.value = e.target.result;
@@ -46,7 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
             };
             reader.readAsText(file);
         } else {
-            alert('กรุณาลากไฟล์ Text หรือ CSV เท่านั้น');
+            alert('กรุณาลากไฟล์ Excel (.xlsx, .xls), CSV หรือ Text File เท่านั้น');
         }
     }
 

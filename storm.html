@@ -16,6 +16,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="storm_script.js" defer></script>
 </head>
 
@@ -31,6 +32,7 @@
             <ul class="nav-menu">
                 <li><a href="bot.html" class="nav-link">BOT SPLITTER</a></li>
                 <li><a href="storm.html" class="nav-link active">STORM SPLITTER</a></li>
+                <li><a href="create_sheet.html" class="nav-link">CREATE SHEET</a></li>
             </ul>
             <a href="#" class="nav-link contact-btn">Contact</a>
         </div>
@@ -69,8 +71,7 @@
                         </select>
                     </div>
 
-                    <button id="splitBtn" class="action-btn"
-                        style="background: linear-gradient(135deg, #ec4899, #be185d); box-shadow: 0 4px 15px rgba(236, 72, 153, 0.5);">
+                    <button id="splitBtn" class="action-btn btn-animate-pink">
                         <span class="btn-text">🌪️ แยกข้อมูล Storm</span>
                     </button>
                     <button id="clearBtn" class="secondary-btn">🗑️ ล้างข้อมูล</button>

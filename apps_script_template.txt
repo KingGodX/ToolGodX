@@ -1,0 +1,66 @@
+/*
+ * ToolGodX - Google Sheet Automatic Uploader Script
+ * 
+ * วิธีการติดตั้ง (Setup Guide):
+ * 1. ไปที่ Google Sheet ของคุณ -> Extensions (ส่วนขยาย) -> Apps Script
+ * 2. ลบโค้ดเก่าออกให้หมด แล้ววางโค้ดนี้ลงไปแทน
+ * 3. กด Save (รูปแผ่นดิสก์) หรือ Ctrl+S
+ * 4. กดปุ่ม Deploy (การทำให้ใช้งานได้) -> New deployment (การทำให้ใช้งานได้รายการใหม่)
+ * 5. ตรง "Select type" (เลือกประเภท) ให้เลือก "Web app"
+ * 6. ตั้งค่าดังนี้:
+ *    - Description: ToolGodX Uploader
+ *    - Execute as: Me (ฉัน)
+ *    - Who has access: Anyone (ทุกคน) **สำคัญมาก**
+ * 7. กด Deploy -> Copy "Web App URL" มาใส่ในหน้าเว็บ ToolGodX
+ */
+
+function doPost(e) {
+  try {
+    // 1. รับข้อมูลจากเว็บ (JSON Format)
+    var jsonData = JSON.parse(e.postData.contents);
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+    
+    // 2. เตรียมข้อมูลลงแถว (Row Data)
+    // หัวข้อ: Money, User:Pass, Username, ATM, Stocker, Chef, Fishing, Farming, Combo, Time
+    var rows = jsonData.map(function(item) {
+      return [
+        item.money,
+        item.userPass,
+        item.username,
+        item.atm,
+        item.stocker,
+        item.chef,
+        item.fishing,
+        item.farming,
+        item.combo,
+        new Date() // Timestamp
+      ];
+    });
+
+    // 3. หาบรรทัดสุดท้าย แล้ววางข้อมูลต่อท้าย
+    if (rows.length > 0) {
+      // getLastRow + 1 คือแถวถัดไปที่ว่าง
+      var startRow = sheet.getLastRow() + 1;
+      var numRows = rows.length;
+      var numCols = rows[0].length;
+      
+      sheet.getRange(startRow, 1, numRows, numCols).setValues(rows);
+    }
+
+    // 4. ส่งผลลัพธ์กลับไปบอกเว็บว่า "สำเร็จ"
+    return ContentService
+      .createTextOutput(JSON.stringify({ "result": "success", "count": rows.length }))
+      .setMimeType(ContentService.MimeType.JSON);
+
+  } catch (error) {
+    // กรณี Error
+    return ContentService
+      .createTextOutput(JSON.stringify({ "result": "error", "message": error.toString() }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+// ฟังก์ชัน dummy สำหรับแก้ปัญหา CORS Preflight (ไม่ต้องแก้ไข)
+function doGet(e) {
+  return ContentService.createTextOutput("ToolGodX Script is Working!");
+}
