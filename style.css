@@ -396,6 +396,7 @@ textarea:focus {
     box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
     border: none;
     color: white;
+    will-change: background-position;
 }
 
 .btn-animate-green:hover {
@@ -409,6 +410,7 @@ textarea:focus {
     box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
     border: none;
     color: white;
+    will-change: background-position;
 }
 
 .btn-animate-blue:hover {
@@ -422,6 +424,7 @@ textarea:focus {
     box-shadow: 0 4px 15px rgba(236, 72, 153, 0.4);
     border: none;
     color: white;
+    will-change: background-position;
 }
 
 .btn-animate-pink:hover {
