@@ -580,6 +580,10 @@ footer {
     .results-grid {
         grid-template-columns: 1fr;
     }
+
+    .grid-2-col {
+        grid-template-columns: 1fr;
+    }
 }
 
 /* ========================================= */
