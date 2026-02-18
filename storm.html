@@ -33,6 +33,7 @@
                 <li><a href="bot.html" class="nav-link">BOT SPLITTER</a></li>
                 <li><a href="storm.html" class="nav-link active">STORM SPLITTER</a></li>
                 <li><a href="create_sheet.html" class="nav-link">CREATE SHEET</a></li>
+                <li><a href="pcboost.html" class="nav-link">PC BOOST</a></li>
             </ul>
             <a href="#" class="nav-link contact-btn">Contact</a>
         </div>
@@ -61,7 +62,14 @@
                 </div>
 
                 <div class="controls">
-
+                    <!-- Filter Buttons -->
+                    <div class="filter-group" id="filterGroup"
+                        style="display: none; width: 100%; justify-content: center; margin-bottom: 1rem; gap: 0.5rem;">
+                        <button class="filter-btn active" data-filter="all">ทั้งหมด</button>
+                        <button class="filter-btn" data-filter="normal">✅ Normal</button>
+                        <button class="filter-btn" data-filter="locked">🔒 Locked</button>
+                        <button class="filter-btn" data-filter="banned">🚫 Banned</button>
+                    </div>
 
                     <div class="control-group">
                         <label for="outputMode">Output Mode</label>

@@ -37,82 +37,186 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function handleFiles(files) {
-        const file = files[0];
+        if (files.length === 0) return;
 
-        // Handle Excel Files
-        if (file.name.endsWith('.xlsx') || file.name.endsWith('.xls')) {
+        let processedCount = 0;
+        let combinedText = "";
+
+        // Iterate through all files
+        Array.from(files).forEach(file => {
             const reader = new FileReader();
+
             reader.onload = function (e) {
-                const data = new Uint8Array(e.target.result);
-                const workbook = XLSX.read(data, { type: 'array' });
+                let textContent = "";
 
-                // Get first sheet
-                const firstSheetName = workbook.SheetNames[0];
-                const worksheet = workbook.Sheets[firstSheetName];
+                // Handle Excel Files
+                if (file.name.endsWith('.xlsx') || file.name.endsWith('.xls')) {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    // Get first sheet
+                    const firstSheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[firstSheetName];
+                    // Convert to CSV format to reuse existing parser
+                    textContent = XLSX.utils.sheet_to_csv(worksheet);
+                }
+                // Handle Text/CSV Files
+                else if (file.type.match('text.*') || file.name.endsWith('.csv') || file.name.endsWith('.txt')) {
+                    textContent = e.target.result; // Text content is directly available here if readAsText used
+                    // Wait, readAsArrayBuffer is used for Excel, readAsText for CSV. 
+                    // To support both in one loop easily without complex logic, let's just use readAsArrayBuffer for Excel 
+                    // AND readAsText for CSV. But we can't switch reader method easily inside loop without separate logic.
+                    // Actually, the FileReader instance is unique per file if we create it inside.
+                }
 
-                // Convert to CSV format to reuse existing parser
-                const csvData = XLSX.utils.sheet_to_csv(worksheet);
+                // Append content with a newline separator
+                combinedText += textContent + "\n";
+                processedCount++;
 
-                inputText.value = csvData;
-                updateLineCount();
+                // Check if all files are processed
+                if (processedCount === files.length) {
+                    // Update input text only once at the end
+                    // If we already have text in the box, refrain from overwriting? 
+                    // Current behavior suggests replacing. Let's append if data exists? 
+                    // User probably wants to add to existing or replace. Let's replace for now based on 'handleFiles' usually handling the drop.
+                    // Actually, if they drag multiple files, they expect those to be the content.
+                    inputText.value = combinedText;
+                    updateLineCount();
+                }
             };
-            reader.readAsArrayBuffer(file);
-        }
-        // Handle Text/CSV Files
-        else if (file.type.match('text.*') || file.name.endsWith('.csv')) {
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                inputText.value = e.target.result;
-                updateLineCount();
-            };
-            reader.readAsText(file);
-        } else {
-            alert('กรุณาลากไฟล์ Excel (.xlsx, .xls), CSV หรือ Text File เท่านั้น');
-        }
+
+            // Trigger read based on file type
+            if (file.name.endsWith('.xlsx') || file.name.endsWith('.xls')) {
+                reader.readAsArrayBuffer(file);
+            } else {
+                // Default to text for CSV/TXT
+                reader.readAsText(file);
+            }
+        });
     }
 
-    // New Parsing Logic: Extract Sections and Combos
+    // New Parsing Logic: Extract Sections and Combos based on Total Value
     function parseSections(text) {
         const lines = text.split(/\r\n|\r|\n/);
-        const sections = [];
-        let currentSectionName = "Uncategorized"; // Default if no header found first
-        let currentCombos = [];
+        const sectionsMap = new Map(); // key: fullCategoryName, value: [combos]
 
-        // Regex to match CSV line: "PC","Combo",... -> Header
-        // Regex to match Data line: "GodX...","...","..."
-        const dataLineRegex = /^"[^"]+","([^"]+)",/;
-        const headerLineRegex = /^PC,Combo,Username/;
+        let currentMajorCategory = "Account Normal"; // Default
+
+        // Regex to split CSV even with quotes
+        const csvSplitRegex = /,(?=(?:(?:[^"]*"){2})*[^"]*$)/;
 
         lines.forEach(line => {
             const trimmedLine = line.trim();
             if (!trimmedLine) return; // Skip empty lines
 
-            // Check if it's a data line
-            const match = trimmedLine.match(dataLineRegex);
-            if (match && match[1]) {
-                // It's a combo line
-                if (match[1].includes(':')) {
-                    currentCombos.push(match[1]);
+            // Check for Major Category Headers
+            // Logic: If line starts with "Account", treat as major category change
+            if (trimmedLine.startsWith("Account Normal")) {
+                currentMajorCategory = "Account Normal";
+                return;
+            } else if (trimmedLine.startsWith("Account Locked")) {
+                currentMajorCategory = "Account Locked";
+                return;
+            } else if (trimmedLine.startsWith("Account Banned")) {
+                currentMajorCategory = "Account Banned";
+                return;
+            } else if (trimmedLine.startsWith("Account")) {
+                // Fallback for other potential account types
+                currentMajorCategory = trimmedLine.split('(')[0].trim();
+                return;
+            }
+
+            // Skip CSV Headers
+            if (trimmedLine.includes('PC,Combo,Username')) return;
+
+            // Split CSV
+            let cols = trimmedLine.split(csvSplitRegex);
+
+            // Clean up quotes from columns
+            cols = cols.map(col => col.replace(/^"|"$/g, '').trim());
+
+            // Check if valid data line
+            // Index 1 (2nd col) = Combo (User:Pass)
+            // Index 10 (11th col) = Total
+            if (cols.length >= 11 && cols[1].includes(':')) {
+                const combo = cols[1];
+                const totalText = cols[10]; // "524034"
+
+                // Parse Total
+                const total = parseInt(totalText.replace(/,/g, ''), 10) || 0;
+
+                // Categorize Amount
+                const amountCategory = getCategoryFromTotal(total);
+
+                // Create Composite Category Key
+                const fullCategory = `${currentMajorCategory} - ${amountCategory}`;
+
+                if (!sectionsMap.has(fullCategory)) {
+                    sectionsMap.set(fullCategory, []);
                 }
-            } else if (trimmedLine.match(headerLineRegex)) {
-                // It's a CSV header line (PC,Combo,...), ignore
-            } else {
-                // Valid Section Header? (e.g., "100k (35) 315บาท")
-                // If we have accumulated combos for previous section, save them
-                if (currentCombos.length > 0) {
-                    sections.push({ name: currentSectionName, items: currentCombos });
-                    currentCombos = []; // Reset
-                }
-                currentSectionName = trimmedLine; // Start new section
+                sectionsMap.get(fullCategory).push(combo);
             }
         });
 
-        // Push the last section if any
-        if (currentCombos.length > 0) {
-            sections.push({ name: currentSectionName, items: currentCombos });
-        }
+        // Convert Map to Array of Objects
+        const sections = [];
+
+        // Sorting Logic:
+        // 1. Major Category: Normal -> Locked -> Banned -> Others
+        // 2. Amount Category: Under 100k -> 100k ... -> 1m ...
+        const sortedKeys = Array.from(sectionsMap.keys()).sort((a, b) => {
+            const [majorA, amountA] = a.split(' - ');
+            const [majorB, amountB] = b.split(' - ');
+
+            // 1. Compare Major
+            if (majorA !== majorB) {
+                const majorOrder = ["Account Normal", "Account Locked", "Account Banned"];
+                const idxA = majorOrder.indexOf(majorA);
+                const idxB = majorOrder.indexOf(majorB);
+
+                // If both are in known list, sort by index
+                if (idxA !== -1 && idxB !== -1) return idxA - idxB;
+                // If only A is known, A comes first
+                if (idxA !== -1) return -1;
+                // If only B is known, B comes first
+                if (idxB !== -1) return 1;
+                // Both unknown, sort alphabetically
+                return majorA.localeCompare(majorB);
+            }
+
+            // 2. Compare Amount (Same Major)
+            return compareCategories(amountA, amountB);
+        });
+
+        sortedKeys.forEach(key => {
+            sections.push({ name: key, items: sectionsMap.get(key) });
+        });
 
         return sections;
+    }
+
+    function getCategoryFromTotal(total) {
+        if (total < 100000) return "Under 100k";
+
+        if (total >= 1000000) {
+            const millions = Math.floor(total / 1000000);
+            return `${millions}m+`;
+        }
+
+        // 100k - 999k range
+        const hundredKs = Math.floor(total / 100000); // 1, 2, 3... 9
+        return `${hundredKs}00k`;
+    }
+
+    function compareCategories(a, b) {
+        // Helper to extract value for sorting
+        const getVal = (str) => {
+            if (!str) return 0;
+            if (str === "Under 100k") return 0;
+            if (str.endsWith('m+')) return parseFloat(str) * 1000000;
+            if (str.endsWith('k')) return parseFloat(str) * 1000;
+            return 0;
+        };
+        return getVal(a) - getVal(b);
     }
 
     function updateLineCount() {
@@ -145,6 +249,42 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // Filter Logic
+    const filterButtons = document.querySelectorAll('.filter-btn');
+
+    filterButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            // Remove active class from all
+            filterButtons.forEach(b => b.classList.remove('active'));
+            // Add active to clicked
+            btn.classList.add('active');
+
+            const filter = btn.getAttribute('data-filter');
+            filterResults(filter);
+        });
+    });
+
+    function filterResults(category) {
+        const cards = document.querySelectorAll('.result-card');
+        let visibleCount = 0;
+
+        cards.forEach(card => {
+            const cardCategory = card.getAttribute('data-major-category');
+
+            if (category === 'all' || cardCategory === category) {
+                card.classList.remove('hidden');
+                // Optional: Restart animation
+                card.style.animation = 'none';
+                card.offsetHeight; /* trigger reflow */
+                card.style.animation = 'fadeIn 0.4s ease-out forwards';
+                // Add delay stagger for visible cards? Maybe too complex for now.
+                visibleCount++;
+            } else {
+                card.classList.add('hidden');
+            }
+        });
+    }
+
     // Split Logic
     splitBtn.addEventListener('click', () => {
         const sections = updateLineCount();
@@ -153,6 +293,10 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('ไม่พบข้อมูล Combo หรือกลุ่มข้อมูลในข้อความที่วาง');
             return;
         }
+
+        // Show filter buttons if hidden
+        const filterGroup = document.getElementById('filterGroup');
+        if (filterGroup) filterGroup.style.display = 'flex';
 
         resultsArea.innerHTML = ''; // Clear previous results
         const mode = document.getElementById('outputMode').value; // cards or single
@@ -181,6 +325,14 @@ document.addEventListener('DOMContentLoaded', () => {
         requestAnimationFrame(() => {
             resultsArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
         });
+
+        // Default to "All" or check active button
+        const activeBtn = document.querySelector('.filter-btn.active');
+        if (activeBtn) {
+            filterResults(activeBtn.getAttribute('data-filter'));
+        } else {
+            filterResults('all');
+        }
     });
 
     function createResultCardElement(title, items, index) {
@@ -193,6 +345,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Pink border/glow for Storm theme
         card.style.borderColor = 'rgba(236, 72, 153, 0.3)';
+
+        // Determine Major Category for Data Attribute
+        let majorCategory = 'other';
+        const lowerTitle = title.toLowerCase();
+        if (lowerTitle.includes('normal')) majorCategory = 'normal';
+        else if (lowerTitle.includes('locked')) majorCategory = 'locked';
+        else if (lowerTitle.includes('banned')) majorCategory = 'banned';
+
+        card.setAttribute('data-major-category', majorCategory);
 
         // Use transform instead of other properties for performance
         card.style.willChange = 'opacity, transform';
